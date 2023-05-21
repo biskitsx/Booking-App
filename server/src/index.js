@@ -18,7 +18,7 @@ import roomRoutes from './routes/roomRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 
 // middleware import
-import { errorHotelMiddleware } from './middleware/hotelMiddleware.js'
+import { errorMiddleware } from './middleware/errorMiddleware.js'
 
 // file import
 
@@ -36,7 +36,7 @@ app.use("/api/hotel", hotelRoutes )
 app.use("/api/room", roomRoutes)
 
 // middleware error
-app.use(errorHotelMiddleware)
+app.use(errorMiddleware)
 
 // listen & connectDB
 app.listen(PORT, ()=> {

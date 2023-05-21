@@ -1,4 +1,4 @@
-import { errorHotelMiddleware } from "../middleware/hotelMiddleware.js"
+import { errorMiddleware } from "../middleware/errorMiddleware.js"
 import User from "../models/User.js"
 import { createError } from "../utils/error.js"
 import tokenManager from '../utils/tokenManager.js'
@@ -16,10 +16,7 @@ export const login = async (req, res, next) => {
     try {
         const {username, password} = req.body
         const user = await User.login(username, password)
-        // console.log(user)
         const token     = tokenManager.createToken(user._id, user.isAdmin)
-        // const decodeToken = tokenManager.verifyToken(token)
-        // console.log(decodeToken)
         res
             .cookie("access_token", token, { httpOnly: true })
             .json(user)
