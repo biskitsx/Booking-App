@@ -1,5 +1,5 @@
 import Hotel from '../models/Hotel.js'
-import { createError } from '../utils/error.js'
+import Room from "../models/Room.js";
 
 /* CREATE */
 export const createHotel = async (req, res, next) => {
@@ -29,7 +29,7 @@ export const updateHotel = async (req, res, next) => {
 export const deleteHotel = async (req, res, next) => {
     try {
         const { id } = req.params
-        const deletedHotel = await Hotel.findByIdAndDelete(id)
+        await Hotel.findByIdAndDelete(id)
         res.status(200).json({msg:"Hotel has been deleted"})
     } catch(e) {
         next(e)
@@ -49,8 +49,12 @@ export const getSingleHotel = async (req, res, next) => {
 
 /* GET */
 export const getHotel = async (req, res, next) => {
+    const {min, max, limit, ...others} = req.query
     try {
-        const hotels = await Hotel.find({})
+        const hotels = await Hotel.find({
+            cheapestPrice: { $gt: min || 1,  $lt: max || 999 } ,
+            ...others
+        }).limit(limit)
         res.status(200).json(hotels)
     } catch(e) {
         next(e)
@@ -87,4 +91,16 @@ export const countByType = async (req, res, next) => {
     }
 }
 
-
+/* GET */
+export const getHotelRooms = async (req, res, next) => {
+    try {
+        // console.log("first")
+        const hotels = await Hotel.findById(req.params.id)
+        const lists = await Promise.all(hotels.rooms.map(room=>{
+            return Room.findById(room)
+        }))
+        res.status(200).json(lists)
+    } catch(e) {
+        next(e)
+    }
+}
